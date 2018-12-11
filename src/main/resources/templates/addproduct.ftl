@@ -13,7 +13,7 @@
         <b>Additional Info:</b>
         <br/>
         <textarea name="description" placeholder="Enter full product description:"></textarea>
-        <select size="2" name="availability">
+        <select name="availability">
             <option value="0">No</option>
             <option value="1">Yes</option>
         </select>

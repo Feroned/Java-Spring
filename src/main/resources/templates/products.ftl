@@ -1,4 +1,5 @@
 <#import "parts/common.ftl" as c>
+<#import "parts/pager.ftl" as p>
 
 <@c.page "Products">
 <div>
@@ -30,7 +31,7 @@
     </tr>
     </thead>
 <tbody>
-<#list productEntities as productEntity>
+<#list productEntities.content as productEntity>
     <tr>
         <td><input type="checkbox" name="id_${productEntity.id}" multiple value="${productEntity.id}"></td>
         <td>${productEntity.id}</td>
@@ -46,4 +47,5 @@ No products
 </table>
 <input type="hidden" name="_csrf" value="${_csrf.token}"/>
 </form>
+<@p.pager url, productEntities/>
 </@c.page>

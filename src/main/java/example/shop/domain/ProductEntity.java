@@ -12,10 +12,6 @@ public class ProductEntity {
     private String shortDescription;
     private Integer price;
 
-    @OneToOne
-    @JoinColumn(name="product_id")
-    private ProductData productData;
-
     public ProductEntity () {
     }
 
@@ -56,13 +52,4 @@ public class ProductEntity {
     public void setPrice(Integer price) {
         this.price = price;
     }
-
-    public ProductData getProductData() {
-        return productData;
-    }
-
-    public void setProductData(ProductData productData) {
-        this.productData = productData;
-    }
-
 }

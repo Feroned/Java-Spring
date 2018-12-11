@@ -2,7 +2,7 @@
 
 <@c.page "${productEntity.name}">
     <div>
-        <a href="/">Back</a>
+        <a href="/catalog">Back</a>
     </div>
     <div>
         <div>
@@ -24,4 +24,6 @@
             </#if>
         </div>
     </div>
+    <a href="/view/${links.prevProduct}">Previous</a>
+    <a href="/view/${links.nextProduct}">Next</a>
 </@c.page>
