@@ -12,8 +12,20 @@ public class ProductMedia {
     private Integer id;
 
     private Integer productId;
+    private String type;
     private String altCode;
     private String imgPath;
+
+    public ProductMedia() {
+
+    }
+
+    public ProductMedia(Integer productId, String type, String altCode, String imgPath) {
+        this.productId = productId;
+        this.type = type;
+        this.altCode = altCode;
+        this.imgPath = imgPath;
+    }
 
     public Integer getId() {
         return id;
@@ -45,5 +57,13 @@ public class ProductMedia {
 
     public void setImgPath(String imgPath) {
         this.imgPath = imgPath;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

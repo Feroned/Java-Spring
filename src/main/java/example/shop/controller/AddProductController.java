@@ -5,6 +5,10 @@ import example.shop.domain.ProductEntity;
 import example.shop.repos.ProductDataRepo;
 import example.shop.repos.ProductEntityRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,10 +19,14 @@ import java.util.Map;
 
 @Controller
 public class AddProductController {
+    private final ProductEntityRepo productEntityRepo;
+    private final ProductDataRepo productDataRepo;
+
     @Autowired
-    private ProductEntityRepo productEntityRepo;
-    @Autowired
-    private ProductDataRepo productDataRepo;
+    public AddProductController(ProductEntityRepo productEntityRepo, ProductDataRepo productDataRepo) {
+        this.productEntityRepo = productEntityRepo;
+        this.productDataRepo = productDataRepo;
+    }
 
     @GetMapping("/addProduct")
     public String addProduct ()
@@ -34,6 +42,7 @@ public class AddProductController {
             @RequestParam Integer availability,
             @RequestParam Integer quantity,
             @RequestParam String description,
+            @PageableDefault(sort = {"name"}, direction = Sort.Direction.ASC, size = 6) Pageable pageable,
             Model model
     ) {
         ProductEntity productEntity = new ProductEntity(name, shortDescription, price);
@@ -41,9 +50,10 @@ public class AddProductController {
         ProductData prData = new ProductData(productEntity.getId(), description, availability, quantity);
         productDataRepo.save(prData);
 
-        Iterable<ProductEntity> productEntities = productEntityRepo.findAll();
-        model.addAttribute("productEntities", productEntities);
-        return "products";
+//        Page<ProductEntity> productEntities = productEntityRepo.findAll(pageable);
+//        model.addAttribute("productEntities", productEntities);
+//        model.addAttribute("url", "/products");
+        return "redirect:/products";
     }
 
 }
