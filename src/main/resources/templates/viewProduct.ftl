@@ -9,6 +9,9 @@
             <p><b>${productEntity.name}</b></p>
         </div>
         <div>
+            <img src="/img/${productImage}" alt="${productAltCode}"/>
+        </div>
+        <div>
             <p><span>Price: </span>${productEntity.price}$</p>
         </div>
         <p><b>Additional Info:</b></p>

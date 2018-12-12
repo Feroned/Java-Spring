@@ -1,8 +1,9 @@
 package example.shop.controller;
 
 import example.shop.domain.ProductEntity;
-import example.shop.repos.ProductDataRepo;
+import example.shop.domain.ProductMedia;
 import example.shop.repos.ProductEntityRepo;
+import example.shop.repos.ProductMediaRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,20 +12,18 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.lang.reflect.Array;
-import java.util.*;
 
 @Controller
 public class HomeController {
 
     private final ProductEntityRepo productEntityRepo;
+    private final ProductMediaRepo productMediaRepo;
 
     @Autowired
-    public HomeController(ProductEntityRepo productEntityRepo) {
+    public HomeController(ProductEntityRepo productEntityRepo, ProductMediaRepo productMediaRepo) {
         this.productEntityRepo = productEntityRepo;
+        this.productMediaRepo = productMediaRepo;
     }
 
     @GetMapping("/")
@@ -43,8 +42,33 @@ public class HomeController {
             Model model
     ) {
         Page<ProductEntity> productEntities;
-        Integer tempFrom = fromFilter.isEmpty() ? 0 : Integer.parseInt(fromFilter);
-        Integer tempTo = toFilter.isEmpty() ? 999999 : Integer.parseInt(toFilter);
+        Iterable<ProductMedia> productMedia;
+        Integer tempFrom = 0;
+        Integer tempTo = 0;
+        String message = "";
+        Integer messageType = 0;
+
+        try {
+            tempFrom = fromFilter.isEmpty() ? 0 : Integer.parseInt(fromFilter);
+            tempTo = toFilter.isEmpty() ? 999999 : Integer.parseInt(toFilter);
+            if (tempTo < tempFrom) {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            productEntities = productEntityRepo.findAll(pageable);
+            message = "Please provide correct data in filters";
+            model.addAttribute("show", true);
+            model.addAttribute("messageType", messageType);
+            model.addAttribute("message", message);
+            model.addAttribute("productEntities", productEntities);
+            model.addAttribute("url", "/catalog");
+            model.addAttribute("nameFilter", nameFilter);
+            model.addAttribute("fromFilter", fromFilter);
+            model.addAttribute("toFilter", toFilter);
+            model.addAttribute("order", 0);
+
+            return "home";
+        }
         Integer orderVal = 0;
 
         if (!order.isEmpty() && order.equals("name")) {
@@ -74,6 +98,8 @@ public class HomeController {
                             pageable
                     );
         }
+        productMedia = productMediaRepo.findAll();
+        model.addAttribute("productMedia", productMedia);
         model.addAttribute("productEntities", productEntities);
         model.addAttribute("url", "/catalog");
         model.addAttribute("nameFilter", nameFilter);
