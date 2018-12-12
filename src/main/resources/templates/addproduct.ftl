@@ -1,13 +1,15 @@
 <#import "parts/common.ftl" as c>
+<#import "parts/messages.ftl" as m>
 
 <@c.page "Add Product">
+<@m.show show messageType message />
 <div>
     <a href="/products">Back</a>
 </div>
 <div>
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         <input type="text" name="name" placeholder="Enter name:">
-        <input type="text" name="price" placeholder="Enter price:">
+        <input type="text" name="priceStr" placeholder="Enter price:">
         <textarea name="shortDescription" placeholder="Enter short description:"></textarea>
         <br/>
         <b>Additional Info:</b>
@@ -17,7 +19,8 @@
             <option value="0">No</option>
             <option value="1">Yes</option>
         </select>
-        <input type="text" name="quantity">
+        <input type="text" name="quantityStr">
+        <input type="file" name="productImage">
         <button type="submit">Add Product</button>
         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
     </form>

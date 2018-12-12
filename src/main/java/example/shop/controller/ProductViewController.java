@@ -2,9 +2,10 @@ package example.shop.controller;
 
 import example.shop.domain.ProductData;
 import example.shop.domain.ProductEntity;
+import example.shop.domain.ProductMedia;
 import example.shop.repos.ProductDataRepo;
 import example.shop.repos.ProductEntityRepo;
-import javafx.util.Pair;
+import example.shop.repos.ProductMediaRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -21,11 +21,13 @@ import java.util.Map;
 public class ProductViewController {
     private final ProductEntityRepo productEntityRepo;
     private final ProductDataRepo productDataRepo;
+    private final ProductMediaRepo productMediaRepo;
 
     @Autowired
-    public ProductViewController(ProductEntityRepo productEntityRepo, ProductDataRepo productDataRepo) {
+    public ProductViewController(ProductEntityRepo productEntityRepo, ProductDataRepo productDataRepo, ProductMediaRepo productMediaRepo) {
         this.productEntityRepo = productEntityRepo;
         this.productDataRepo = productDataRepo;
+        this.productMediaRepo = productMediaRepo;
     }
 
     @GetMapping("{product}")
@@ -37,9 +39,20 @@ public class ProductViewController {
         ProductEntity productEntity;
         productEntity = productEntityRepo.findById(product).get(0);
 
+        ProductMedia productMedia;
+        String imagePath = "", altCode = "";
+        try {
+            productMedia = productMediaRepo.findByProductId(product).get(0);
+            imagePath = productMedia.getImgPath();
+            altCode = productMedia.getAltCode();
+        } catch (Exception e) {
+            imagePath = "placeholder.jpg";
+        }
         Map<String, String> prevAndNext = this.getPrevAndNdext(product);
         model.addAttribute("productEntity", productEntity);
         model.addAttribute("productData", productData);
+        model.addAttribute("productImage", imagePath);
+        model.addAttribute("productAltCode", altCode);
         model.addAttribute("links", prevAndNext);
 
         return "viewProduct";
