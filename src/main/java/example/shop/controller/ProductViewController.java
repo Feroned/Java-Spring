@@ -38,7 +38,16 @@ public class ProductViewController {
 
         ProductEntity productEntity;
         productEntity = productEntityRepo.findById(product).get(0);
+        String[] fun = productData.getFunctions().split("\r\n");
+        String finalFunctions = "";
 
+        for (int i = 0 ; i < fun.length; i++) {
+            finalFunctions += fun[i];
+            if (i+1 != fun.length) {
+                finalFunctions += ", ";
+            }
+        }
+        productData.setFunctions(finalFunctions);
         ProductMedia productMedia;
         String imagePath = "", altCode = "";
         try {
@@ -46,7 +55,7 @@ public class ProductViewController {
             imagePath = productMedia.getImgPath();
             altCode = productMedia.getAltCode();
         } catch (Exception e) {
-            imagePath = "placeholder.jpg";
+            imagePath = "placeholder.png";
         }
         Map<String, String> prevAndNext = this.getPrevAndNdext(product);
         model.addAttribute("productEntity", productEntity);

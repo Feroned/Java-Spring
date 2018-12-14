@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.io.File;
 
 @SuppressWarnings("ALL")
@@ -53,7 +54,21 @@ public class AddProductController {
             @RequestParam(required = false) Integer availability,
             @RequestParam(defaultValue = "") String quantityStr,
             @RequestParam(defaultValue = "") String description,
+            @RequestParam(defaultValue = "") String showerType,
+            @RequestParam(defaultValue = "") Integer ceiling,
+            @RequestParam(defaultValue = "") String functions,
+            @RequestParam(defaultValue = "") String widthStr,
+            @RequestParam(defaultValue = "") String heightStr,
+            @RequestParam(defaultValue = "") String depthStr,
+            @RequestParam(defaultValue = "") Integer pallet,
+            @RequestParam(defaultValue = "") String palletMaterial,
+            @RequestParam(defaultValue = "") String palletHeightStr,
+            @RequestParam(defaultValue = "") String curtainMaterial,
+            @RequestParam(defaultValue = "") String glassType,
+            @RequestParam(defaultValue = "") String glassTicknessStr,
+            @RequestParam(defaultValue = "") String doorConstruction,
             @RequestParam("productImage") MultipartFile file,
+
             Model model
     ) {
         String message = "";
@@ -63,7 +78,6 @@ public class AddProductController {
         if (name.equals("")
                 || priceStr.equals("")
                 || shortDescription.equals("")
-                || description.equals("")
                 || (!file.getContentType().equals("image/jpeg") && !file.isEmpty())
         ) {
             messageType = 1;
@@ -76,10 +90,35 @@ public class AddProductController {
         }
         try {
             Integer price = Integer.parseInt(priceStr);
-            Integer quantity = Integer.parseInt(quantityStr);
+            Integer quantity = quantityStr.isEmpty() ? 0 : Integer.parseInt(quantityStr);
+
+            Integer width = widthStr.isEmpty() ? 0 : Integer.parseInt(widthStr);
+            Integer height = heightStr.isEmpty() ? 0 : Integer.parseInt(heightStr);
+            Integer depth = depthStr.isEmpty() ? 0 : Integer.parseInt(depthStr);
+            Integer palletHeight = palletHeightStr.isEmpty() ? 0 : Integer.parseInt(palletHeightStr);
+            Integer glassTickness = glassTicknessStr.isEmpty() ? 0 : Integer.parseInt(glassTicknessStr);
+
             ProductEntity productEntity = new ProductEntity(name, shortDescription, price);
             productEntityRepo.save(productEntity);
-            ProductData prData = new ProductData(productEntity.getId(), description, availability, quantity);
+            ProductData prData = new ProductData(
+                    productEntity.getId(),
+                    description,
+                    availability,
+                    quantity,
+                    showerType,
+                    ceiling,
+                    functions,
+                    width,
+                    height,
+                    depth,
+                    pallet,
+                    palletMaterial,
+                    palletHeight,
+                    curtainMaterial,
+                    glassType,
+                    glassTickness,
+                    doorConstruction
+                );
             productDataRepo.save(prData);
 
             if (file != null && !file.getOriginalFilename().isEmpty()) {

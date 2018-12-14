@@ -74,7 +74,7 @@ public class ProductsController {
             imagePath = productMedia.getImgPath();
             altCode = productMedia.getAltCode();
         } catch (Exception e) {
-            imagePath = "placeholder.jpg";
+            imagePath = "placeholder.png";
         }
         model.addAttribute("productImage", imagePath);
         model.addAttribute("productAltCode", altCode);
@@ -93,7 +93,20 @@ public class ProductsController {
             @RequestParam Integer availability,
             @RequestParam String quantityStr,
             @RequestParam String description,
-            @RequestParam Integer id,
+            @PathVariable Integer product,
+            @RequestParam(defaultValue = "") String showerType,
+            @RequestParam(defaultValue = "") Integer ceiling,
+            @RequestParam(defaultValue = "") String functions,
+            @RequestParam(defaultValue = "") String widthStr,
+            @RequestParam(defaultValue = "") String heightStr,
+            @RequestParam(defaultValue = "") String depthStr,
+            @RequestParam(defaultValue = "") Integer pallet,
+            @RequestParam(defaultValue = "") String palletMaterial,
+            @RequestParam(defaultValue = "") String palletHeightStr,
+            @RequestParam(defaultValue = "") String curtainMaterial,
+            @RequestParam(defaultValue = "") String glassType,
+            @RequestParam(defaultValue = "") String glassTicknessStr,
+            @RequestParam(defaultValue = "") String doorConstruction,
             @RequestParam("productImage") MultipartFile file,
 
             Model model
@@ -101,16 +114,15 @@ public class ProductsController {
         String message = "";
         Boolean needToShow = true;
         Integer messageType = 0;
-        String imagePath = "placeholder.jpg", altCode = "";
+        String imagePath = "placeholder.png", altCode = "";
 
-        ProductEntity productEntity = productEntityRepo.findById(id).get(0);
-        ProductData productData = productDataRepo.findByProductId(id).get(0);
+        ProductEntity productEntity = productEntityRepo.findById(product).get(0);
+        ProductData productData = productDataRepo.findByProductId(product).get(0);
         ProductMedia productMedia;
 
         if (name.equals("")
                 || priceStr.equals("")
                 || shortDescription.equals("")
-                || description.equals("")
                 || (!file.getContentType().equals("image/jpeg") && !file.isEmpty())
         ) {
             messageType = 1;
@@ -123,7 +135,13 @@ public class ProductsController {
         }
         try {
             Integer price = Integer.parseInt(priceStr);
-            Integer quantity = Integer.parseInt(quantityStr);
+            Integer quantity = quantityStr.isEmpty() ? 0 : Integer.parseInt(quantityStr);
+
+            Integer width = widthStr.isEmpty() ? 0 : Integer.parseInt(widthStr);
+            Integer height = heightStr.isEmpty() ? 0 : Integer.parseInt(heightStr);
+            Integer depth = depthStr.isEmpty() ? 0 : Integer.parseInt(depthStr);
+            Integer palletHeight = palletHeightStr.isEmpty() ? 0 : Integer.parseInt(palletHeightStr);
+            Integer glassTickness = glassTicknessStr.isEmpty() ? 0 : Integer.parseInt(glassTicknessStr);
 
             productEntity.setName(name);
             productEntity.setPrice(price);
@@ -132,6 +150,20 @@ public class ProductsController {
             productData.setAvailability(availability);
             productData.setDescription(description);
             productData.setQuantity(quantity);
+
+            productData.setShowerType(showerType);
+            productData.setCeiling(ceiling);
+            productData.setFunctions(functions);
+            productData.setWidth(width);
+            productData.setHeight(height);
+            productData.setDepth(depth);
+            productData.setPallet(pallet);
+            productData.setPalletMaterial(palletMaterial);
+            productData.setPalletHeight(palletHeight);
+            productData.setCurtainMaterial(curtainMaterial);
+            productData.setGlassType(glassType);
+            productData.setGlassTickness(glassTickness);
+            productData.setDoorConstruction(doorConstruction);
 
             productEntityRepo.save(productEntity);
             productDataRepo.save(productData);
@@ -148,9 +180,9 @@ public class ProductsController {
                 file.transferTo(new File(uploadPath + "/" + filename));
 
                 try {
-                    productMedia = productMediaRepo.findByProductId(id).get(0);
+                    productMedia = productMediaRepo.findByProductId(product).get(0);
                 } catch (Exception e) {
-                    productMedia = new ProductMedia(id, "image", name, filename);
+                    productMedia = new ProductMedia(product, "image", name, filename);
                 }
                 altCode = productMedia.getAltCode();
                 imagePath = filename;
@@ -160,7 +192,7 @@ public class ProductsController {
         } catch (Exception e) {
             message = "An error has occured while creating the product: " + e.getMessage();
             messageType = 1;
-            imagePath = "placeholder.jpg";
+            imagePath = "placeholder.png";
 
             model.addAttribute("show", needToShow);
             model.addAttribute("messageType", messageType);
@@ -216,8 +248,22 @@ public class ProductsController {
     }
 
     @GetMapping("/admin")
-    public String authorizathion()
-    {
+    public String authorizathion(
+            @RequestParam(required = false) String error,
+            Model model
+    ) {
+        model.addAttribute("show", true);
+        model.addAttribute("messageType", 1);
+        model.addAttribute("message", "Wrong password or user name!");
+
+        if (error != null) {
+            model.addAttribute("show", true);
+            model.addAttribute("messageType", 1);
+            model.addAttribute("message", "Wrong password or user name!");
+        } else {
+            model.addAttribute("show", false);
+        }
+
         return "admin";
     }
 }

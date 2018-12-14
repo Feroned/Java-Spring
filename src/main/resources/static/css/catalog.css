@@ -1,0 +1,17 @@
+.caption {
+    margin-left: 10%;
+}
+
+#collapseFilters {
+    float: right;
+}
+
+body {
+    background: url(/img/bg-light.jpg);
+}
+
+@media only screen and (max-device-width: 480px) {
+    #collapseFilters {
+        float: none;
+    }
+}

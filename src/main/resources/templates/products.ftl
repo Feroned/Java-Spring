@@ -3,54 +3,59 @@
 <#import "parts/messages.ftl" as m>
 
 
-<@c.page "Products">
+<@c.page "Products" "products">
 <@m.show show messageType message />
 
-<div>
-    <form action="/logout" method="post">
+<div class="row justify-content-center align-items-center">
+    <div class="btn-group" role="group" aria-label="Basic example">
+        <input class="btn btn-warning" type="submit" value="Sign Out" form="logout"/>
+        <input class="btn btn-info" type="submit" value="To Catalog" form="catalog"/>
+    </div>
+    <form action="/logout" method="post" id="logout">
         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-        <input type="submit" value="Sign Out"/>
+    </form>
+    <form action="/" method="get" id="catalog">
     </form>
 </div>
-<div>
-    <form action="/" method="get">
-        <input type="submit" value="To Catalog"/>
-    </form>
+<div class="row mb-1">
+    <div class="col">
+        <button class="btn btn-danger btn-lg delete-button" type="submit" form="delete">Delete</button>
+    </div>
+    <div class="col">
+        <a class="btn btn-primary btn-lg float-right add-button" href="/addProduct">Add New Product</a>
+    </div>
 </div>
-<div>
-    <a href="/addProduct">Add New Product</a>
-</div>
-<form method="post" action="/deleteProducts">
-    <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-    <button type="submit">Delete</button>
-<table>
-<thead>
+<form method="post" action="/deleteProducts" id="delete">
+<table class="table table-stripped">
+<thead class="thead-dark">
     <tr>
-        <th></th>
-        <th><b>Image</b></th>
-        <th><b>ID</b></th>
-        <th><b>Name</b></th>
-        <th><b>Price</b></th>
-        <th><b>Short Description</b></th>
-        <th><b>Action</b></th>
+        <th scope="col">#</th>
+        <th scope="col"><a href="/products?sort=id">ID</a></th>
+        <th scope="col">Thubmnail</th>
+        <th scope="col"><a href="/products?sort=name">Name</a></th>
+        <th scope="col"><a href="/products?sort=price">Price</a></th>
+        <th scope="col">Short Description</th>
+        <th scope="col">Action</th>
     </tr>
     </thead>
-<tbody>
+<tbody class="bg-light">
 <#list productEntities.content as productEntity>
     <tr>
     <td><input type="checkbox" name="id_${productEntity.id}" multiple value="${productEntity.id}"></td>
+    <td>${productEntity.id}</td>
     <#list productMedia as media>
             <#if media.getProductId() == productEntity.getId()>
-                <td><img src="img/${media.getImgPath()}" alt="${media.getAltCode()}" width="100" height="100"/></td>
+                <td><img src="img/${media.getImgPath()}" alt="${media.getAltCode()}" width="90" height="60"/></td>
                 <#break/>
             <#elseif !media_has_next>
-                    <td><img src="/img/placeholder.jpg" width="100" height="100"/> </td>
+                    <td><img src="/img/placeholder.png" width="90" height="60"/> </td>
             </#if>
+        <#else>
+            <td><img src="/img/placeholder.png" width="90" height="60"/> </td>
         </#list>
-        <td>${productEntity.id}</td>
-        <td>${productEntity.name}</td>
-        <td>${productEntity.price}</td>
-        <td>${productEntity.shortDescription}</td>
+        <td class="font-weight-bold">${productEntity.name}</td>
+        <td>$${productEntity.price}</td>
+        <td class="text-secondary">${productEntity.shortDescription}</td>
         <td><a href="/editProduct/${productEntity.id}">Edit</a></td>
     </tr>
 <#else>

@@ -1,10 +1,10 @@
 <#macro show show=false type=0 message="">
-    <div>
+    <div >
     <#if show == true>
         <#if type = 0>
-            <p>${message}</p>
+            <div class="alert alert-success" role="alert"><b>${message}</b></div>
         <#else>
-            <p>${message}</p>
+            <div class="alert alert-danger" role="alert"><b>${message}</b></div>
         </#if>
     </#if>
     </div>
