@@ -57,10 +57,12 @@ public class HomeController {
         } catch (Exception e) {
             productEntities = productEntityRepo.findAll(pageable);
             message = "Please provide correct data in filters";
+            messageType = 1;
             model.addAttribute("show", true);
             model.addAttribute("messageType", messageType);
             model.addAttribute("message", message);
             model.addAttribute("productEntities", productEntities);
+            model.addAttribute("productMedia", productMediaRepo.findAll());
             model.addAttribute("url", "/catalog");
             model.addAttribute("nameFilter", nameFilter);
             model.addAttribute("fromFilter", fromFilter);
